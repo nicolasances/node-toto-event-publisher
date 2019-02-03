@@ -11,4 +11,10 @@ Typical usage:
 ```
 var totoEventPublisher = require('./TotoEventPublisher');
 totoEventPublisher.registerTopic({topicName: 'trainingSessionsCreated', microservice: 'training-session'}).then(() => {}, (err) => {console.log(err);});
+
+// Post event
+let event = {...};
+
+totoEventPublisher.publishEvent('trainingSessionsCreated', event);
+
 ```
