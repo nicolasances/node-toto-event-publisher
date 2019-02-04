@@ -30,7 +30,7 @@ class TotoEventPublisher {
 
       for (var i = 0; i < this.topics.length; i++) {
 
-        if (this.topics[i].topicName == info.topic) {found = true; break;}
+        if (this.topics[i].topicName == topic) {found = true; break;}
 
       }
 
