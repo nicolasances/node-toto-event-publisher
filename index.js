@@ -39,11 +39,8 @@ class TotoEventPublisher {
       // If no topic has been register, break
       if (!found) {failure({code: 404, message: 'Sorry, the topic "' + topic + '" has not been registered. Please register it first with the registerTopic() method'}); return;}
 
-      // Check for the correlation Id
-      if (event.correlationId == null) {failure({code: 400, message: 'The correlationId is mandatory when producing events.'}); return;}
-
-      // Logging the event posting
-      logger.eventOut(event.correlationId, topic);
+      // Logging the event posting, ONLY if there is a correlation id
+      if (event.correlationId) logger.eventOut(event.correlationId, topic);
 
       // Send the event to the producer
       producer.send([{topic: topic, messages: JSON.stringify(event)}], function(err, data) {
