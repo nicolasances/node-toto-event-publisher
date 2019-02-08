@@ -1,5 +1,6 @@
 var kafka = require('kafka-node');
 var moment = require('moment-timezone');
+var logger = require('toto-logger');
 
 Producer = kafka.Producer;
 client = new kafka.KafkaClient({kafkaHost: 'kafka:9092', connectTimeout: 3000, requestTimeout: 6000});
@@ -18,6 +19,7 @@ class TotoEventPublisher {
    * Publishes the specified event to the specified topic.
    * Note that :
    * - Topics must be REGISTERED previously through the 'registerTopic()' method
+   * - Events must ALWAYS contain a 'correlationId' field
    *
    * If the provided topic or event haven't been registered, the call will fail
    */
@@ -36,6 +38,12 @@ class TotoEventPublisher {
 
       // If no topic has been register, break
       if (!found) {failure({code: 404, message: 'Sorry, the topic "' + topic + '" has not been registered. Please register it first with the registerTopic() method'}); return;}
+
+      // Check for the correlation Id
+      if (event.correlationId == null) {failure({code: 400, message: 'The correlationId is mandatory when producing events.'}); return;}
+
+      // Logging the event posting
+      logger.eventOut(event.correlationId, topic);
 
       // Send the event to the producer
       producer.send([{topic: topic, messages: JSON.stringify(event)}], function(err, data) {
