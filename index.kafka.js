@@ -1,8 +1,10 @@
-const {PubSub} = require('@google-cloud/pubsub');
+var kafka = require('kafka-node');
 var moment = require('moment-timezone');
 var logger = require('toto-logger');
 
-const pubsub = new PubSub();
+Producer = kafka.Producer;
+client = new kafka.KafkaClient({idleConnection: 24 * 60 * 60 * 1000, kafkaHost: 'kafka:9092', connectTimeout: 3000, requestTimeout: 6000});
+producer = new Producer(client);
 
 /**
  * Function to create a new unique message id
@@ -64,18 +66,25 @@ class TotoEventPublisher {
       }
 
       // Send the event to the producer
-      pubsub.topic(topic).publish(Buffer.from(JSON.stringify(event))).then(
-        (data) => {
-          success();
-        }
-      ), (err) => {
+      producer.send([{topic: topic, messages: JSON.stringify(event)}], function(err, data) {
+
+        // If there's an error
+        if (err != null) {
+
           // Log the error
           console.log(err);
+
           // Invoke a failure
           failure(err);
+
           // Break
           return;
-      };
+        }
+
+        // If it's a success
+        success();
+
+      })
     })
   }
 
@@ -84,8 +93,6 @@ class TotoEventPublisher {
    * The 'info' object requires the following fields:
    * - topicName  :     the name of the Kafka topic being used
    * - microservice :   the nane of the microservice (e.g. expenses)
-   * 
-   * Note that in this implementation, that uses PubSub, it will also create the topic if it doesn't exist
    */
   registerTopic(info) {
 
@@ -110,11 +117,6 @@ class TotoEventPublisher {
       };
 
       this.topics.push(topic);
-
-      // Create the topic if it hasn't been created
-      pubsub.createTopic(topicName).then(() => {}, (err) => {
-        if (err.code !== 6) console.log(err); // 6 = Topic already exists
-      });
 
       success(topic);
 
