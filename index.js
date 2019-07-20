@@ -114,7 +114,7 @@ class TotoEventPublisher {
       this.topics.push(topic);
 
       // Create the topic (if it hasn't been created)
-      topicCreator.createTopic(topicName);
+      topicCreator.createTopic(info.topicName);
 
       // We're done here!
       success(topic);
