@@ -115,15 +115,13 @@ class TotoEventPublisher {
 
       // Create the topic (if it hasn't been created)
       topicCreator.createTopic(info.topicName).then(() => {
-
-        console.log('[' + info.microservice + '] - Topic ' + info.topicName + ' created');
         
-      }, failure);
-      
-      console.log('[' + info.microservice + '] - Topic ' + info.topicName + ' registered');
+        console.log('[' + info.microservice + '] - Topic ' + info.topicName + ' registered');
+  
+        // We're done here!
+        success(topic);
 
-      // We're done here!
-      success(topic);
+      }, failure);
 
     });
   }
