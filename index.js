@@ -1,8 +1,10 @@
 const {PubSub} = require('@google-cloud/pubsub');
 var moment = require('moment-timezone');
 var logger = require('toto-logger');
+var TopicCreator = require('./util/PubSubTopicCreator');
 
 const pubsub = new PubSub();
+const topicCreator = new TopicCreator(pubsub);
 
 /**
  * Function to create a new unique message id
@@ -111,11 +113,10 @@ class TotoEventPublisher {
 
       this.topics.push(topic);
 
-      // Create the topic if it hasn't been created
-      pubsub.createTopic(topicName).then(() => {}, (err) => {
-        if (err.code !== 6) console.log(err); // 6 = Topic already exists
-      });
+      // Create the topic (if it hasn't been created)
+      topicCreator.createTopic(topicName);
 
+      // We're done here!
       success(topic);
 
     });
