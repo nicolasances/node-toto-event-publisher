@@ -3,7 +3,7 @@ var moment = require('moment-timezone');
 var logger = require('toto-logger');
 var TopicCreator = require('./util/PubSubTopicCreator');
 
-const pubsub = new PubSub();
+const pubsub = new PubSub({projectId: 'toto-events-dev'});
 const topicCreator = new TopicCreator(pubsub);
 
 /**
