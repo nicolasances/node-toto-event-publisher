@@ -9,7 +9,7 @@ When including this through `require()`, a new `TotoEventPublisher` instance wil
 Typical usage:
 
 ```
-var totoEventPublisher = require('./TotoEventPublisher');
+var totoEventPublisher = require('toto-event-publisher');
 totoEventPublisher.registerTopic({topicName: 'trainingSessionsCreated', microservice: 'training-session'}).then(() => {}, (err) => {console.log(err);});
 
 // Post event
